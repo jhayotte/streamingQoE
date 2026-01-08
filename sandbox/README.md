@@ -1,140 +1,147 @@
-📡 Stream Monitoring Sandbox
+# 📡 Stream Monitoring Sandbox
 
 This project is a sandbox for monitoring video stream quality using ffmpeg and ffprobe.
+Run one command and get codec, resolution, bitrate, FPS, black frames, and freezes.
 
-It analyzes a live or VOD stream (HLS, file, HTTP, etc.) and produces a simple quality report including:
+Example:
+```
+./monitor.sh https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+```
 
-Codec & resolution
 
-Average bitrate
 
-FPS
 
-Black frame detection
-
-Freeze detection
-
+It analyzes a live or VOD stream (HLS, file, HTTP, etc.) and generates a simple quality report including bitrate, FPS, black frames, and freezes.  
 The goal is to quickly validate stream health and experiment with video quality monitoring techniques.
 
-✨ Features
+---
 
-📊 Stream metadata extraction (codec, resolution)
+## ✨ Features
 
-📈 Bitrate & FPS monitoring
+- Stream metadata extraction (codec, resolution)
+- Bitrate and FPS monitoring
+- Black frame detection with time intervals
+- Freeze detection
+- Interactive runner for test streams
+- Automatic cleanup of temporary logs
 
-🖤 Black frame detection (with time intervals)
+---
 
-❄️ Freeze detection
+## 🛠️ Requirements
 
-🧪 Interactive runner for test streams
+- Bash
+- ffmpeg (with `blackdetect` and `freezeDetect`)
+- ffprobe
 
-🧹 Automatic cleanup of temporary logs
+### Install ffmpeg
 
-🛠️ Requirements
-
-Make sure the following tools are installed:
-
-bash
-
-ffmpeg (with blackdetect and freezeDetect filters)
-
-ffprobe
-
-On macOS (Homebrew):
-
+macOS:
+```bash
 brew install ffmpeg
-
-
-On Ubuntu:
-
+```
+Ubuntu / Debian:
+```
 sudo apt install ffmpeg
+```
 
-📂 Project Structure
-.
-├── monitor.sh      # Core stream monitoring script
-├── Run.sh          # Interactive runner
+---
+
+## 📂 Project Structure
+
+├── monitor.sh # Core stream monitoring script
+├── Run.sh # Interactive runner
 └── black_frame/
-    └── hls_black_test/
-        └── index.m3u8   # Test stream with black frames
+└── hls_black_test/
+└── index.m3u8 # Test stream with black frames
 
-🚀 How It Works
-monitor.sh
 
-The main script performs three analysis passes on the stream:
+---
 
-Bitrate & FPS
+## 🚀 How It Works
 
-Uses ffmpeg stats output
+The monitoring process runs in three passes:
 
-Black frame detection
+1. Bitrate and FPS analysis  
+   Parses ffmpeg stats output.
 
-Uses blackdetect filter
+2. Black frame detection  
+   Uses the blackdetect video filter.
 
-Freeze detection
+3. Freeze detection  
+   Uses the freezeDetect video filter.
 
-Uses freezeDetect filter
+All results are parsed from temporary logs and summarized into a readable report.
 
-Temporary logs are parsed and summarized into a readable report.
+---
 
-Example Output
-================= STREAM REPORT =================
-Codec           : h264
-Resolution      : 1280x720
-Bitrate         : 2150 kbps
-FPS             : 25
-Black frames    : 2
-Freezes         : 1
+## ▶️ Usage
 
-Black frame intervals (seconds):
-  • From 12.34 → 14.02 (duration: 1.68 s)
-=================================================
-🎉 Monitoring completed.
+### Interactive mode
 
-▶️ Usage
-Option 1 — Run interactively
-chmod +x Run.sh monitor.sh
+````
+chmod +x monitor.sh Run.sh
 ./Run.sh
+````
 
 
-You’ll be prompted to choose:
+Choose between:
+- A normal HLS test stream
+- A local stream containing black frames
 
-1) Normal stream
-2) Stream with black frames
+---
 
-Option 2 — Run directly on any stream
+### Direct mode
+
+```
 ./monitor.sh <stream_url>
-
+```
 
 Examples:
 
+```bash
 ./monitor.sh https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+```
+```bash
+./monitor.sh file:///absolute/path/to/stream.m3u8`
+```
 
-./monitor.sh file:///path/to/your/stream.m3u8
 
-⚠️ Notes & Limitations
+---
 
-This is a sandbox / POC, not a production monitoring system
+## 📊 Example Output
 
-Metrics are derived from ffmpeg logs (best-effort)
+================= STREAM REPORT =================
+Codec : h264
+Resolution : 1280x720
+Bitrate : 2150 kbps
+FPS : 25
+Black frames : 2
+Freezes : 1
 
-Long live streams will run until manually stopped
+Black frame intervals (seconds):
+• From 12.34 → 14.02 (duration: 1.68 s)
 
-Freeze detection sensitivity may vary depending on content
+---
 
-🧪 Ideas for Next Steps
+## ⚠️ Notes
 
-Export metrics to JSON
+- This is a sandbox / POC, not production-ready monitoring
+- Metrics are best-effort and based on ffmpeg logs
+- Long or live streams will run until manually stopped
+- Detection sensitivity depends on stream content
 
-Push results to Datadog / Prometheus
+---
 
-Real-time monitoring loop
+## 🧪 Future Improvements
 
-Threshold-based alerts
+- JSON output
+- Real-time monitoring loop
+- Threshold-based alerts
+- Metrics export (Datadog / Prometheus)
+- Rust or Go implementation
 
-Rewrite core logic in Rust or Go
+---
 
-Support multiple renditions (ABR)
+## 📄 License
 
-📄 License
-
-MIT — feel free to experiment, fork, and improve.
+MIT
